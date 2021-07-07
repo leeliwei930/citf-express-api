@@ -9,7 +9,8 @@ const {
     latestLocalVaccinationRegStatistic,
     localVaccinationRegStatistic,
     latestStateVaccinationRegStatistic,
-    stateVaccinationRegStatistic
+    stateVaccinationRegStatistic,
+    getPopulationByState
 } = require('./handlers')
 const { getStateLatestVaccinationStatistic } = require('./provider')
 
@@ -27,6 +28,7 @@ router.get('/state/registration/:state/', stateVaccinationRegStatistic)
 router.get('/state/registration/:state/latest', latestStateVaccinationRegStatistic)
 router.get('/state/:state', stateStatistic)
 router.get('/state/:state/latest', latestStateStatistic)
+router.get('/population/:state', getPopulationByState)
 server.use("/api/vaccination/stats", router)
 
 server.listen(process.env.EXPRESS_PORT, () => {
