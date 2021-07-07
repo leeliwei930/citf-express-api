@@ -10,7 +10,8 @@ const {
     localVaccinationRegStatistic,
     latestStateVaccinationRegStatistic,
     stateVaccinationRegStatistic,
-    getPopulationByState
+    getPopulationByState,
+    citfStandardStatistics
 } = require('./handlers')
 const { getStateLatestVaccinationStatistic } = require('./provider')
 
@@ -29,6 +30,7 @@ router.get('/state/registration/:state/latest', latestStateVaccinationRegStatist
 router.get('/state/:state', stateStatistic)
 router.get('/state/:state/latest', latestStateStatistic)
 router.get('/population/:state', getPopulationByState)
+router.get('/citf-standard', citfStandardStatistics);
 server.use("/api/vaccination/stats", router)
 
 server.listen(process.env.EXPRESS_PORT, () => {

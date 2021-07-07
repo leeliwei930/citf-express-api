@@ -1,4 +1,5 @@
 const danfo = require("danfojs-node")
+const { response } = require("express")
 const localVaccinationCSV = "https://raw.githubusercontent.com/CITF-Malaysia/citf-public/main/vaccination/vax_malaysia.csv"
 const stateVaccinationDataCSV = "https://raw.githubusercontent.com/CITF-Malaysia/citf-public/main/vaccination/vax_state.csv"
 const localVaccinationRegistrationCSV = "https://raw.githubusercontent.com/CITF-Malaysia/citf-public/main/registration/vaxreg_malaysia.csv"
@@ -219,8 +220,7 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             try {
 
-                let datasets = await danfo.read_csv(populationCSV)
-                let latestStateDataFrame = datasets.sort_index({ ascending: false })
+                let latestStateDataFrame = await danfo.read_csv(populationCSV)
                 if (state !== undefined) {
             
                     latestStateDataFrame = latestStateDataFrame.query({ "column": "state", "is": "==", "to": state })
@@ -239,5 +239,63 @@ module.exports = {
                 })
             }
         })
+},
+    fetchLatestSummary() {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const states = ["Johor",
+                    "Kedah",
+                    "Kelantan",
+                    "Melaka",
+                    "Negeri Sembilan",
+                    "Pahang",
+                    "Perak",
+                    "Perlis",
+                    "Pulau Pinang",
+                    "Sabah",
+                    "Sarawak",
+                    "Selangor",
+                    "Terengganu",
+                    "W.P. Kuala Lumpur",
+                    "W.P. Labuan",
+                    "W.P. Putrajaya",];
+                let responseData = [];
+                let localVaccStat = await this.getMalaysiaLatestVaccinationStatistic();
+                let population = await this.getPopulationByState({ state: "Malaysia" });
+                let localRegStat = await this.getMalaysiaLatestVaccinationRegistrationStatistic();
+                responseData.push({
+                    "nme": "Malaysia",
+                    "regtotal": localRegStat.data.total,
+                    "pop_18": population.data.pop_18,
+                    "pop": population.data.pop,
+                    "vakdose1": localVaccStat.data.dose1_cumul,
+                    "vakdose2": localVaccStat.data.dose2_cumul,
+                    "vakdosecomplete": localVaccStat.data.total_cumul,
+                });
+                for ( let state of states) {
+                    let stateVaccData = await this.getStateLatestVaccinationStatistic({ state });
+                    let statePopulation = await this.getPopulationByState({ state });
+                    let stateReg = await this.getStateLatestVaccinationRegistrationStatistic({state});
+                    responseData.push({
+                        "nme": state,
+                        "regtotal": stateReg.data.total,
+                        "pop_18": statePopulation.data.pop_18,
+                        "pop": statePopulation.data.pop,
+                        "vakdose1": stateVaccData.data.dose1_cumul,
+                        "vakdose2": stateVaccData.data.dose2_cumul,
+                        "vakdosecomplete": stateVaccData.data.total_cumul,
+                    });
+                }
+
+                let payload = {
+                    "data": responseData,
+                    "updated": new Date(localVaccStat.data.date).getTime() / 1000
+                }
+                resolve(payload);
+            } catch (error) {
+                console.log(error);
+                reject(error)
+            }
+        });
     }
 }
