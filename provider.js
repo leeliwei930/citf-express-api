@@ -289,7 +289,7 @@ module.exports = {
 
                 let payload = {
                     "data": responseData,
-                    "updated": new Date(localVaccStat.data.date).getTime() / 1000
+                    "updated": new Date(localVaccStat.data.date).getTime()
                 }
                 resolve(payload);
             } catch (error) {
