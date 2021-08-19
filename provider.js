@@ -331,9 +331,9 @@ module.exports = {
                     regtotal: localRegStat.data.total,
                     pop_18: population.data.pop_18,
                     pop: population.data.pop,
-                    vakdose1: localVaccStat.data.dose1_cumul,
-                    vakdose2: localVaccStat.data.dose2_cumul,
-                    vakdosecomplete: localVaccStat.data.total_cumul
+                    vakdose1: localVaccStat.data.cumul_partial,
+                    vakdose2: localVaccStat.data.cumul_full,
+                    vakdosecomplete: localVaccStat.data.cumul_full
                 });
                 for (let state of states) {
                     let stateVaccData = await this.getStateLatestVaccinationStatistic(
@@ -350,9 +350,9 @@ module.exports = {
                         regtotal: stateReg.data.total,
                         pop_18: statePopulation.data.pop_18,
                         pop: statePopulation.data.pop,
-                        vakdose1: stateVaccData.data.dose1_cumul,
-                        vakdose2: stateVaccData.data.dose2_cumul,
-                        vakdosecomplete: stateVaccData.data.total_cumul
+                        vakdose1: stateVaccData.data.cumul_partial,
+                        vakdose2: stateVaccData.data.cumul_full,
+                        vakdosecomplete: stateVaccData.data.cumul_full
                     });
                 }
 
